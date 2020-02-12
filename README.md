@@ -21,3 +21,154 @@
 ### 前提知識
 
 HTML, CSS, JavaScript, jQuery に多少慣れていることを想定しています。関数、オブジェクト、配列、クラスの概念について詳しい説明はしません。ただし、先に述べたように class 構文の理解がより深まるようなプログラムの構成にしています。
+
+## 迷路の表示
+
+まずは、迷路を表示させるために HTML と CSS ファイルを用意しましょう。今回は、Table タグを装飾することで迷路を表示させています。
+
+**index.html**
+
+```javascript=
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Maze</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <h1 class="title">THE 迷路</h1>
+    <p class="description">
+      <span class="description -blue">■</span>：スタート
+      <span class="description -red">■</span>：ゴール
+      <span class="description -green">■</span>：正解ルート
+    </p>
+    <table class="maze">
+      <tbody>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+      </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="js/main.js" type="module"></script>
+  </body>
+</html>
+```
+
+**style.css**
+
+```css=
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.contoroller {
+  text-align: center;
+}
+
+.contoroller .answer {
+  font-size: 16px;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  line-height: 40px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border: 1px #333 solid;
+  background: rgba(0, 0, 0, 0);
+  transition: all 0.3s;
+}
+
+.contoroller .answer.active {
+  background: rgba(0, 255, 0, 1);
+}
+
+.title {
+  text-align: center;
+}
+
+.description {
+  text-align: center;
+}
+
+.description.-blue {
+  color: #00f;
+}
+
+.description.-red {
+  color: #f00;
+}
+
+.description.-green {
+  color: #0f0;
+}
+
+.maze {
+  border-collapse: collapse;
+  margin: 20px auto 0;
+}
+
+.maze-cell {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 1px solid #ddd;
+}
+
+.maze-cell.-wall {
+  background-color: #000;
+}
+
+.maze-cell.-path {
+  background-color: #fff;
+}
+
+.maze-cell.-answer-route.show {
+  background-color: #0f0;
+}
+
+.maze-cell.-start {
+  background-color: #00f;
+}
+
+.maze-cell.-goal {
+  background-color: #f00;
+}
+```
