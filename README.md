@@ -24,70 +24,21 @@ HTML, CSS, JavaScript, jQuery に多少慣れていることを想定してい�
 
 ## 迷路の表示
 
-まずは、迷路を表示させるために HTML と CSS ファイルを用意しましょう。今回は、Table タグを装飾することで迷路を表示させています。
+まずは、迷路を表示させるために HTML と CSS ファイルを用意しましょう。今回は、Table タグを装飾することで迷路を表示させています。下記は一部抜粋して説明していますが、[こちら](https://codepen.io/matsuhaya/pen/KKpdYpm)にベースのコードを記載しています。
 
 **index.html**
 
 ```javascript=
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Maze</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <h1 class="title">THE 迷路</h1>
-    <p class="description">
-      <span class="description -blue">■</span>：スタート
-      <span class="description -red">■</span>：ゴール
-      <span class="description -green">■</span>：正解ルート
-    </p>
-    <table class="maze">
-      <tbody>
-        <tr>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-        </tr>
-        <tr>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell -wall"></td>
-        </tr>
-        <tr>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell -wall"></td>
-        </tr>
-        <tr>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell"></td>
-          <td class="maze-cell -wall"></td>
-        </tr>
-        <tr>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-          <td class="maze-cell -wall"></td>
-        </tr>
-      </tbody>
-    </table>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="js/main.js" type="module"></script>
-  </body>
-</html>
+<table class="maze">
+  <tbody>
+    <tr>
+      // 壁は-wall
+      <td class="maze-cell -wall"></td>
+      // 通路は-path
+      <td class="maze-cell -path"></td>
+    </tr>
+  </tbody>
+</table>
 ```
 
 **style.css**
@@ -97,47 +48,6 @@ HTML, CSS, JavaScript, jQuery に多少慣れていることを想定してい�
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-.contoroller {
-  text-align: center;
-}
-
-.contoroller .answer {
-  font-size: 16px;
-  text-decoration: none;
-  color: inherit;
-  display: inline-block;
-  line-height: 40px;
-  margin-top: 20px;
-  padding: 0 20px;
-  border: 1px #333 solid;
-  background: rgba(0, 0, 0, 0);
-  transition: all 0.3s;
-}
-
-.contoroller .answer.active {
-  background: rgba(0, 255, 0, 1);
-}
-
-.title {
-  text-align: center;
-}
-
-.description {
-  text-align: center;
-}
-
-.description.-blue {
-  color: #00f;
-}
-
-.description.-red {
-  color: #f00;
-}
-
-.description.-green {
-  color: #0f0;
 }
 
 .maze {
@@ -159,16 +69,9 @@ HTML, CSS, JavaScript, jQuery に多少慣れていることを想定してい�
 .maze-cell.-path {
   background-color: #fff;
 }
-
-.maze-cell.-answer-route.show {
-  background-color: #0f0;
-}
-
-.maze-cell.-start {
-  background-color: #00f;
-}
-
-.maze-cell.-goal {
-  background-color: #f00;
-}
 ```
+
+**テーブルを装飾して表示した迷路**
+![](https://i.imgur.com/jbFv4gt.png)
+
+このように、セル（行と列の交わる箇所）の状態を壁や通路として装飾することで迷路を表で表すことができます。
