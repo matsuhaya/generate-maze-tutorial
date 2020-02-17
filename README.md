@@ -164,7 +164,9 @@ makeGrid() {
 2. ランダムでリストからセルを選び、選んだセルはリストから削除
 3. リストの中身がなくなるまで、 **壁の拡張(\*)** を繰り返し実行する
 
-![](https://i.imgur.com/MW0EbZt.png)
+<p align="center">
+<img src="https://i.imgur.com/MW0EbZt.png" width=50%>
+</div>
 
 **(\*)壁の拡張**
 
@@ -174,7 +176,9 @@ makeGrid() {
 4. もしまだ既存の壁と接続していなければ、 **壁の拡張(\*)** を続行
 5. 既存の壁と接続した時点で壁伸ばし終了
 
-![](https://i.imgur.com/HwnvIh4.png)
+<p align="center">
+<img src="https://i.imgur.com/HwnvIh4.png" width=50%>
+</div>
 
 さて、まずは壁を作成するスタート地点となるセルの候補を列挙しましょう。条件は、row, column がともに偶数となるセルです。9 マス四方の場合、スタート地点の候補は下記の通りになります。
 
