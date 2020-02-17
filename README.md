@@ -164,20 +164,7 @@ makeGrid() {
 2. ランダムでリストからセルを選び、選んだセルはリストから削除
 3. リストの中身がなくなるまで、 **壁の拡張(\*)** を繰り返し実行する
 
-```flow
-st=>start: 開始
-op1=>operation: 開始座標
-リストアップ
-op2=>operation: ランダムでリストから
-セルを取り出す
-cd1=>condition: リストは空？
-sb1=>subroutine: 壁の拡張
-e=>end: 終了
-
-st->op1->op2->sb1->cd1
-cd1(no)->op2
-cd1(yes)->e
-```
+![](https://i.imgur.com/MW0EbZt.png)
 
 **(\*)壁の拡張**
 
@@ -187,27 +174,7 @@ cd1(yes)->e
 4. もしまだ既存の壁と接続していなければ、 **壁の拡張(\*)** を続行
 5. 既存の壁と接続した時点で壁伸ばし終了
 
-```flow
-st=>start: 開始
-op1=>operation: 壁を伸ばせる方向を
-リストアップ
-op2=>operation: リストからランダムで
-壁を伸ばす方向を決定
-op3=>operation: 壁を2マス拡張
-cd1=>condition: 壁を伸ばせる
-方向はある？
-cd2=>condition: 既存の壁と
-接続した？
-sb1=>subroutine: 壁の拡張
-e=>end: 終了
-
-st->cd1
-cd1(yes)->op1->op2->op3
-cd1(no)->e
-op3->cd2
-cd2(yes)->e
-cd2(no)->cd1
-```
+![](https://i.imgur.com/HwnvIh4.png)
 
 さて、まずは壁を作成するスタート地点となるセルの候補を列挙しましょう。条件は、row, column がともに偶数となるセルです。9 マス四方の場合、スタート地点の候補は下記の通りになります。
 
