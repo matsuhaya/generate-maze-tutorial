@@ -2,46 +2,95 @@
 
 ## 本チュートリアルの説明
 
-本チュートリアルは、自動で迷路を作成するプログラムを作成します。実際に手を動かしながら、class 構文についての理解を深めることを目的としています。使用する言語は**JavaScript**です。
+本チュートリアルは、自動で迷路を作成するプログラムを作成する過程を説明します。使用する言語は**JavaScript**です。迷路作成プログラムでは、再帰関数やクラス構文を実装します。これらに馴染みがない人でも、手を動かしながら作成することで学びが得られることを目的としています。
 
 このチュートリアルは下記のセクションに分かれています。
 
-1. 迷路の表示：HTML と CSS で迷路を表示させます。
-2. 迷路の作成：迷路の構造を表す Maze クラスを作成します。
-3. 迷路の探索：迷路の探索をする Explorer クラスを作成します。
+1. 迷路の表示： JavaScript で作成した迷路情報を HTML と CSS で表示させます。
+2. 迷路の自動作成： 迷路を自動作成するプログラムを実装します。
+3. 迷路の自動探索： 迷路を自動作成するプログラムを実装します。
 
 ### これから作る成果物
 
 このチュートリアルでは、迷路を自動生成します。迷路はプログラムを実行するたびに自動生成され、ただ１つの正解ルートをもちます。迷路の生成と探索にはアルゴリズムを利用しますが、事前の知識は必要ありません。
 
-最終的な成果物はこちら：[迷路作成プログラム](http://grayhorse5.sakura.ne.jp/make-maze/)
+[**最終的な成果物を確認する**](http://grayhorse5.sakura.ne.jp/make-maze/)
 
-![正解ルート表示画面](https://i.imgur.com/6uhNFuT.png)
+<!-- ![正解ルート表示画面](https://i.imgur.com/6uhNFuT.png) -->
 
 ### 前提知識
 
-HTML, CSS, JavaScript, jQuery に多少慣れていることを想定しています。関数、オブジェクト、配列、クラスの概念について詳しい説明はしません。ただし、先に述べたように class 構文の理解がより深まるようなプログラムの構成にしています。
+HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定しています。関数、オブジェクト、配列、クラスの概念について詳しい説明はしません。サンプルコードの記述に関しては、一部解説をしています。このチュートリアルでは、[アロー関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Functions/Arrow_functions)、[クラス](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Classes)、[import](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/import)、[export](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/export)を使用しています。
+
+### チュートリアルの準備
+
+このチュートリアルを進めるにあたって、下記のいずれかの方法で開発環境を準備します。
+
+#### ブラウザでコードを書く
+
+[CodePen](https://codepen.io/)を利用することで、ブラウザでコードを書くことができます。
+注意事項として、外部ファイルの読み込みをするので、そのための設定が必要です。[こちら](https://codepen.io/pwdr/pen/rdvYBe)に設定の例が記載してあります。
+
+#### ローカル開発環境でコードを書く
+
+好きなテキストエディタでコードを書きます。
+注意事項として、外部ファイルの読み込みをするので、そのための設定が必要です。今回は、簡易ローカルサーバを立てることができる拡張機能を導入します。そうしなければ、CORS により外部ファイルが読み込めないためです。例えば、テキストエディタに[VSCode](https://azure.microsoft.com/ja-jp/products/visual-studio-code/)を利用する場合、[Live Sever](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)をインストールします。
 
 ## 迷路の表示
 
-まずは、迷路を表示させるために HTML と CSS ファイルを用意しましょう。今回は、Table タグを装飾することで迷路を表示させています。下記は一部抜粋して説明していますが、[こちら](https://codepen.io/matsuhaya/pen/KKpdYpm)にベースのコードを記載しています。
+まずは、迷路を表示させるために HTML と CSS ファイルを用意しましょう。用意するファイルは２つあります。 **_index.html_** と **_style.css_** です。今回は、Table タグを装飾することで迷路を表現しています。
 
-**index.html**
+**_index.html_**
 
 ```javascript=
-<table class="maze">
-  <tbody>
-    <tr>
-      // 壁は-wall
-      <td class="maze-cell -wall"></td>
-      // 通路は-path
-      <td class="maze-cell -path"></td>
-    </tr>
-  </tbody>
-</table>
+<!DOCTYPE html>
+  <body>
+    <table class="maze">
+      <tbody>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -start"></td>
+          <td class="maze-cell -path"></td>
+          <td class="maze-cell -path"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -path"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -path"></td>
+          <td class="maze-cell -path"></td>
+          <td class="maze-cell -goal"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+        <tr>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+          <td class="maze-cell -wall"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
 ```
 
-**style.css**
+<br>
+
+**_style.css_**
 
 ```css=
 *,
@@ -69,19 +118,86 @@ HTML, CSS, JavaScript, jQuery に多少慣れていることを想定してい�
 .maze-cell.-path {
   background-color: #fff;
 }
+
+.maze-cell.-start {
+  background-color: #00f;
+}
+
+.maze-cell.-goal {
+  background-color: #f00;
+}
 ```
 
-**テーブルを装飾して表示した迷路**
-![](https://i.imgur.com/jbFv4gt.png)
+class の説明
 
-このように、セル（行と列の交わる箇所）の状態を壁や通路として装飾することで迷路を表で表すことができます。
+- maze-cell: 迷路のセルを表す。通路や壁にも当てはまる共通クラス。
+- -wall: 迷路の壁を表す。黒色。
+- -path: 迷路の通路を表す。白色。
+- -start: 迷路のスタートを表す。青色。
+- -goal: 迷路のゴールを表す。赤色。
 
-## 迷路の作成
+![](https://i.imgur.com/lnewAuw.png)
 
-これまでは、迷路の表示を実装しました。では、これから迷路の中身を実装していきましょう。まずは、Maze クラスにコンストラクタを追加しましょう。迷路が持つ情報は全てコンストラクタの中に追加します。
+このように、セル（行と列の交わる箇所）を壁や通路として定義し、定義に応じた装飾をすることで迷路を表を用いて表現することができます。
+
+### JavaScript で迷路を作成する
+
+HTML と CSS で迷路を表示することができました。しかし、このままでは動的に作成した迷路を表示させることができません。これから、JavaScript で迷路の中身を実装していきましょう。用意する JavaScript のファイルは２つあります。**_main.js_** と **_Maze.js_** です。
+
+**_main.js_**
+
+```javascript=
+import Maze from './Maze.js';
+
+const WIDTH = 9;
+const HEIGHT = 9;
+const maze = new Maze(WIDTH, HEIGHT);
+```
+
+**_Maze.js_**
+
+```javascript=
+export default class Maze {
+  constructor(WIDTH, HEIGHT) {
+    this.WIDTH = WIDTH;
+    this.HEIGHT = HEIGHT;
+    this.grid = []; // cellTypeを格納した二次元配列
+    this.startCellList = []; // 壁を生成するスタート地点となるセルの候補を格納した二次元配列
+    this.start = []; // スタート地点の[row, column]
+    this.goal = []; // ゴール地点の[row, column]
+    this.cellType = {
+      Start: 'S',
+      Goal: 'G',
+      Path: 0,
+      Wall: 1,
+      Extending: 2,
+      ExtendingStart: 3
+    };
+    this.extendingCounter = 0; // 迷路の壁を拡張するたびにカウンターが増加する
+  }
+}
+```
+
+２つのファイルの説明
+
+- **_main.js_**: メインのロジックを実装。 **_Maze.js_** で定義したクラスを操作する。
+- **_Maze.js_**: 迷路のクラス(Maze クラス)を定義する。
+
+Maze クラスでは、コンストラクタを定義します。迷路が持つ情報は、全てコンストラクタの中にプロパティとして追加します。 **_main.js_** は、 **_Maze.js_** で定義したクラスを呼び出して使えるようにしています。
+
+```javascript=
+import Maze from './Maze.js';
+```
+
+よって、Maze クラスのインスタンスを生成することが可能です。
+
+```javascript=
+const maze = new Maze(WIDTH, HEIGHT);
+```
+
+<!-- これまでは、迷路の表示を実装しました。では、これから迷路の中身を実装していきましょう。まずは、Mazeクラスにコンストラクタを追加しましょう。迷路が持つ情報は全てコンストラクタの中に追加します。
 
 **Maze.js**
-
 ```javascript=
 export default class Maze {
   constructor(WIDTH, HEIGHT) {
@@ -100,18 +216,21 @@ export default class Maze {
     };
   }
 }
-```
+``` -->
 
 ### 迷路を二次元配列で表現する
 
-Maze クラスでは、迷路の構造に関する情報を定義します。オセロや将棋盤のような盤面を表現するのには、二次元配列が便利です。今回は、下記のように行列で座標を表すように定義することにします。
+Maze クラスでは、迷路の構造に関する情報を定義します。オセロや将棋盤のような盤面を表現するのには、二次元配列が便利です。今回は、下記のように行(Row)と列(Column)で座標を表すように定義します。
 
-**二次元配列の行列でセルを指定する**
 ![](https://i.imgur.com/Y4dDWyX.png)
 
-### `📌ポイント： gridのタイプをリスト形式で定義する`
+二次元配列で指定したセルの値は、cellType で用意している状態を表します。壁にしたいセルの値は 1 で、ゴールにしたいセルの値は"G"です。
 
-下記のように、grid の中に格納するセルのタイプをリスト形式で定義しておきましょう。理由は、意味のない文字や数字を論理式の中に記述するとコードの可読性が低くなるからです。少なくとも、人間が管理する範囲に関しては、人間が理解しやすいような表記を意識してコードを記述します。
+![](https://i.imgur.com/XQm5ttv.png)
+
+### `👍gridのタイプをリスト形式で定義する`
+
+ここでポイント 👍 を紹介します。下記のように、grid の中に格納するセルのタイプをリスト形式で定義しておきましょう。理由は、意味のない文字や数字を論理式の中に記述するとコードの可読性が低くなるからです。少なくとも、人間が管理する範囲に関しては、人間が理解しやすいような表記を意識してコードを記述します。
 
 ```javascript=
 this.cellType = {
@@ -119,42 +238,146 @@ this.cellType = {
   Goal: 'G',
   Path: 0,
   Wall: 1,
-  Extending: 2
+  Extending: 2,
+  ExtendingStart: 3
 };
 ```
 
-grid を作成するサンプルコードを見てみましょう。二次元配列を作成する過程で、条件式の判定に応じて壁や道を格納しているのがわかると思います。下記のサンプルでは、初期状態なので大枠の壁以外は全て通路になるように grid を作成します。
+cellType の説明
 
-**Maze.js**
+- Extending: 拡張中の壁であることを表す。
+- ExtendingStart: 壁を拡張する時の拡張開始位置候補であることを表す。
+
+例として、リスト形式で表示しない場合のプログラムの一部を示します。
+
+```javascript=
+// 指定セルがWallではないなら、Extendingに状態を変更する
+if (this.grid[row][column] !== 1) {
+  this.grid[row][column] = 2;
+  isExtendingSuccess = this.extendWall(row, column);
+}
+```
+
+次に、リスト形式で表示した場合のプログラムの一部です。
+
+```javascript=
+// 指定セルがWallではないなら、Extendingに状態を変更する
+if (this.grid[row][column] !== this.cellType.Wall) {
+  this.grid[row][column] = this.cellType.Extending;
+}
+```
+
+上記の２つは、内部的には同じ処理をしています。ただ、上記のプログラムは、みたときに 1 が壁を表すことや、2 が拡張中の壁であることを表すことが頭にないと、読んだときに理解することができません。プログラムを読むときに頭に入れておかなければいけない情報はなるべく少なくした方が、読む人にとっての負担が少ないと言えます。もちろん、全ての場合に当てはまる書き方ではないので、場合によって使い分けましょう。
+
+### 迷路の初期状態を作って表示する
+
+では、早速迷路の初期状態を作成してみましょう。初期状態は、大枠の壁以外が全て通路になるように grid を作成します。
+
+grid を作成するサンプルコードを見てみましょう。makeGrid()と initializeCellType()という２つのクラスメソッドを追加します。このメソッドでは、grid の二次元配列を作成する過程で、条件式の判定に応じたセルに壁や道の値を代入しています。
+
+**_Maze.js_**
 
 ```javascript=
 // HEIGHT行,WIDTH列の行列を生成
-// 大外は壁に設定
-makeGrid() {
+  makeGrid() {
     for (let row = 0; row < this.HEIGHT; row++) {
       let rowList = [];
       for (let column = 0; column < this.WIDTH; column++) {
-        if (row === 0 || row === this.HEIGHT - 1) {
-          rowList.push(this.cellType.Wall);
-        } else {
-          if (column === 0 || column === this.WIDTH - 1) {
-            rowList.push(this.cellType.Wall);
-          } else {
-            rowList.push(this.cellType.Path);
-          }
-        }
+        rowList.push(this.initializeCellType(row, column));
       }
       this.grid.push(rowList);
     }
   }
+
+  // rowとcolumの値に応じたcellTypeの初期化を実施
+  // 大外は壁に設定
+  initializeCellType(row, column) {
+    if (row === 0 || row === this.HEIGHT - 1) {
+      return this.cellType.Wall;
+    } else {
+      if (column === 0 || column === this.WIDTH - 1) {
+        return this.cellType.Wall;
+      } else {
+        return this.cellType.Path;
+      }
+    }
+  }
 ```
 
-**二次元配列で表現した迷路**
-![](https://i.imgur.com/XQm5ttv.png)
+次に、grid の情報を元に DOM を生成するコードを用意しましょう。
 
-上記のように、二次元配列で迷路が表現できるということがわかりました。迷路作成プログラムは、まず二次元配列を作成します。その後、maze クラスで生成したインスタンスのプロパティ（ここでいうセルのタイプ）を変更していき、最終的に出来上がった maze インスタンスの情報を元に迷路を表示するという流れになります。
+**_Maze.js_**
 
-### 迷路を自動で作成する
+```javascript=
+// インスタンスのデータを元に、DOMを生成
+drowMyself() {
+  ++this.extendingCounter;
+  let className = `maze step${this.extendingCounter}`;
+  $('.maze-wrapper').append(
+    $(`<table class="${className}"><caption>${className}</caption>`).append(
+      $('<tbody>')
+    )
+  );
+
+  for (let row = 0; row < this.HEIGHT; row++) {
+    let tr = $('<tr>');
+    for (let column = 0; column < this.WIDTH; column++) {
+      if (this.grid[row][column] === this.cellType.Wall) {
+        tr.append($('<td class="maze-cell -wall"></td>'));
+      } else if (this.grid[row][column] === this.cellType.Extending) {
+        tr.append($('<td class="maze-cell -extending"></td>'));
+      } else if (this.grid[row][column] === this.cellType.ExtendingStart) {
+        tr.append($('<td class="maze-cell -extending-start"></td>'));
+      } else if (this.grid[row][column] === 'S') {
+        tr.append($('<td class="maze-cell -start"></td>'));
+      } else if (this.grid[row][column] === 'G') {
+        tr.append($('<td class="maze-cell -goal"></td>'));
+      } else {
+        tr.append($('<td class="maze-cell -path"></td>'));
+      }
+    }
+
+    $(`.maze.step${this.extendingCounter} tbody`).append(tr);
+  }
+}
+```
+
+**_Maze.js_** で定義したインスタンスメソッドは、 **_main.js_** で実行します。
+
+```javascript=
+maze.makeGrid();
+maze.drowMyself();
+```
+
+ブラウザで確認すると、大外が壁になった迷路が描画できているはずです。
+
+![](https://i.imgur.com/G9w5wWA.png)
+
+コンソールに迷路インスタンスの情報を出力してみましょう。
+
+```javascript=
+console.log(maze);
+```
+
+maze.grid で参照可能な迷路構造が、描画した迷路構造と同じであることが確認できますね。
+
+![](https://i.imgur.com/W8NAxqL.png)
+
+これまでの手順で、二次元配列で迷路を表現できるということがわかりました。
+迷路作成プログラムの流れを整理してみましょう。
+
+- 迷路クラスで定義した、迷路インスタンスを生成
+- 迷路インスタンスのプロパティとして、迷路構造を表す二次元配列を作成
+- 迷路インスタンスのメソッドを実行して、プロパティを更新
+- 迷路インスタンスの情報を元に迷路を表示
+
+迷路を作成するには、迷路クラスで定義したインスタンスメソッドを実行して、迷路インスタンスの情報を更新していきます。次は、迷路を自動で作成するメソッドを実装していきましょう。
+
+[この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/RwPGPXG)
+
+**_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/gOpwmQJ.js)
+
+## 迷路の自動作成
 
 さて、では実際に maze インスタンスの情報をどのように変更していけばいいのでしょうか。迷路を自動で作成するアルゴリズムはいくつかあるようなのですが、今回は「壁伸ばし法」を採用します。今回の実装手順は下記の通りです。
 
