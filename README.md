@@ -20,7 +20,7 @@
 迷路はプログラムを実行するたびに自動生成され、ただ１つの正解ルートをもちます。
 迷路の生成と探索にはアルゴリズムを利用しますが、事前の知識は必要ありません。
 
-[**最終的な成果物を確認する**](http://grayhorse5.sakura.ne.jp/make-maze/)
+[**最終的な成果物を確認する**](http://grayhorse5.sakura.ne.jp/generate-maze/)
 
 <!-- ![正解ルート表示画面](https://i.imgur.com/6uhNFuT.png) -->
 
@@ -43,7 +43,7 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 
 [CodePen](https://codepen.io/)を利用することで、ブラウザでコードを書くことができます。
 注意事項として、外部ファイルの読み込みをするので、そのための設定が必要です。
-[こちら](https://codepen.io/pwdr/pen/rdvYBe)に設定の例が記載してあります。
+[こちら](https://blog.codepen.io/2017/12/26/adding-typemodule-scripts-pens/)に設定の例が記載してあります。
 
 #### ローカル開発環境でコードを書く
 
@@ -175,7 +175,7 @@ HTML と CSS で迷路を表示することができました。
 **_main.js_**
 
 ```javascript=
-import Maze from './Maze.js';
+import { Maze } from './Maze.js';
 
 const WIDTH = 9;
 const HEIGHT = 9;
@@ -185,7 +185,7 @@ const maze = new Maze(WIDTH, HEIGHT);
 **_Maze.js_**
 
 ```javascript=
-export default class Maze {
+export class Maze {
   constructor(WIDTH, HEIGHT) {
     this.WIDTH = WIDTH;
     this.HEIGHT = HEIGHT;
@@ -216,7 +216,11 @@ Maze クラスでは、コンストラクタを定義します。
 **_main.js_** は、 **_Maze.js_** で定義したクラスを呼び出して使えるようにしています。
 
 ```javascript=
-import Maze from './Maze.js';
+// モジュールからエクスポートをひとつインポートする
+import { Maze } from './Maze.js';
+
+// 個々の機能のエクスポート
+export class Maze {...}
 ```
 
 よって、Maze クラスのインスタンスを生成することが可能です。
@@ -224,29 +228,6 @@ import Maze from './Maze.js';
 ```javascript=
 const maze = new Maze(WIDTH, HEIGHT);
 ```
-
-<!-- これまでは、迷路の表示を実装しました。では、これから迷路の中身を実装していきましょう。まずは、Mazeクラスにコンストラクタを追加しましょう。迷路が持つ情報は全てコンストラクタの中に追加します。
-
-**Maze.js**
-```javascript=
-export default class Maze {
-  constructor(WIDTH, HEIGHT) {
-    this.WIDTH = WIDTH; // 迷路の幅
-    this.HEIGHT = HEIGHT; // 迷路の高さ
-    this.grid = []; // cellTypeを格納した二次元配列
-    this.startCellList = []; // 壁を生成するスタート地点となるセルの候補を格納した二次元配列
-    this.start = []; // スタート地点の[row, column]
-    this.goal = []; // ゴール地点の[row, column]
-    this.cellType = {
-      Start: 'S',
-      Goal: 'G',
-      Path: 0,
-      Wall: 1,
-      Extending: 2
-    };
-  }
-}
-``` -->
 
 ### 迷路を二次元配列で表現する
 
@@ -311,14 +292,14 @@ if (this.grid[row][column] !== this.cellType.Wall) {
 ### 迷路の初期状態を作って表示する
 
 では、早速迷路の初期状態を作成してみましょう。初期状態は、大枠の壁以外が全て通路になるように grid を作成します。
-grid を作成するサンプルコードを見てみましょう。makeGrid()と initializeCellType()という２つのクラスメソッドを追加します。
+grid を作成するサンプルコードを見てみましょう。generateGrid()と initializeCellType()という２つのクラスメソッドを追加します。
 このメソッドでは、grid の二次元配列を作成する過程で、条件式の判定に応じたセルに壁や道の値を代入しています。
 
 **_Maze.js_**
 
 ```javascript=
 // HEIGHT行,WIDTH列の行列を生成
-  makeGrid() {
+  generateGrid() {
     for (let row = 0; row < this.HEIGHT; row++) {
       let rowList = [];
       for (let column = 0; column < this.WIDTH; column++) {
@@ -384,7 +365,7 @@ drowMyself() {
 **_Maze.js_** で定義したインスタンスメソッドは、 **_main.js_** で実行します。
 
 ```javascript=
-maze.makeGrid();
+maze.generateGrid();
 maze.drowMyself();
 ```
 
@@ -415,7 +396,7 @@ maze.grid で参照可能な迷路構造が、描画した迷路構造と同じ�
 
 [この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/RwPGPXG)
 
-**_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/gOpwmQJ.js)
+**_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/gOpwmQJ)
 
 <br>
 
