@@ -6,7 +6,7 @@
 
 本チュートリアルは、自動で迷路を生成するプログラムを生成する過程を説明します。
 使用する言語は**JavaScript**です。迷路生成プログラムでは、再帰関数やクラス構文を実装します。
-これらに馴染みがない人でも、手を動かしながら生成することで学びが得られることを目的としています。
+これらに馴染みがない人でも、手を動かしながら実装することですこしでも学びが得られることを目的としています。
 
 このチュートリアルは下記のセクションに分かれています。
 
@@ -33,7 +33,8 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 [アロー関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Functions/Arrow_functions)、
 [クラス](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Classes)、
 [import](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/import)、
-[export](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/export)を使用しています。
+[export](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/export)、
+[分割代入](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)を使用しています。
 
 ### チュートリアルの準備
 
@@ -66,7 +67,7 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 
 **_index.html_**
 
-```javascript=
+```javascript
 <!DOCTYPE html>
   <body>
     <table class="maze">
@@ -116,7 +117,7 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 
 **_style.css_**
 
-```css=
+```css
 *,
 *::before,
 *::after {
@@ -174,7 +175,7 @@ HTML と CSS で迷路を表示することができました。
 
 **_main.js_**
 
-```javascript=
+```javascript
 import { Maze } from './Maze.js';
 
 const WIDTH = 9;
@@ -184,7 +185,7 @@ const maze = new Maze(WIDTH, HEIGHT);
 
 **_Maze.js_**
 
-```javascript=
+```javascript
 export class Maze {
   constructor(WIDTH, HEIGHT) {
     this.WIDTH = WIDTH;
@@ -215,7 +216,7 @@ Maze クラスでは、コンストラクタを定義します。
 迷路が持つ情報は、全てコンストラクタの中にプロパティとして追加します。
 **_main.js_** は、 **_Maze.js_** で定義したクラスを呼び出して使えるようにしています。
 
-```javascript=
+```javascript
 // モジュールからエクスポートをひとつインポートする
 import { Maze } from './Maze.js';
 
@@ -225,7 +226,7 @@ export class Maze {...}
 
 よって、Maze クラスのインスタンスを生成することが可能です。
 
-```javascript=
+```javascript
 const maze = new Maze(WIDTH, HEIGHT);
 ```
 
@@ -249,7 +250,7 @@ Maze クラスでは、迷路の構造に関する情報を定義します。
 理由は、意味のない文字や数字を記述するとコードの可読性が低くなるからです。
 少なくとも、人間が目で見て管理する範囲に関しては、人間が理解しやすいような表記を意識してコードを記述します。
 
-```javascript=
+```javascript
 this.cellType = {
   Start: 'S',
   Goal: 'G',
@@ -267,7 +268,7 @@ cellType の説明
 
 例として、リスト形式で表示しない場合のプログラムの一部を示します。
 
-```javascript=
+```javascript
 // 指定セルがWallではないなら、Extendingに状態を変更する
 if (this.grid[row][column] !== 1) {
   this.grid[row][column] = 2;
@@ -277,7 +278,7 @@ if (this.grid[row][column] !== 1) {
 
 次に、リスト形式で表示した場合のプログラムの一部です。
 
-```javascript=
+```javascript
 // 指定セルがWallではないなら、Extendingに状態を変更する
 if (this.grid[row][column] !== this.cellType.Wall) {
   this.grid[row][column] = this.cellType.Extending;
@@ -285,7 +286,7 @@ if (this.grid[row][column] !== this.cellType.Wall) {
 ```
 
 上記の２つは、内部的には同じ処理をしています。
-ただ、上記のプログラムは、みたときに 1 が壁を表すことや、2 が拡張中の壁であることを表すことが頭にないと、読んだときに理解することができません。
+ただ、上記のプログラムは、コードを読む前に 1 が壁を表すことや、2 が拡張中の壁であることを表すことが頭にないと、読んだときに理解することができません。
 プログラムを読むときに頭に入れておかなければいけない情報はなるべく少なくした方が、読む人にとっての負担が少ないと言えます。
 もちろん、全ての場合に当てはまる書き方ではないので、場合によって使い分けましょう。
 
@@ -297,7 +298,7 @@ grid を生成するサンプルコードを見てみましょう。generateGrid
 
 **_Maze.js_**
 
-```javascript=
+```javascript
 // HEIGHT行,WIDTH列の行列を生成
   generateGrid() {
     for (let row = 0; row < this.HEIGHT; row++) {
@@ -328,7 +329,7 @@ grid を生成するサンプルコードを見てみましょう。generateGrid
 
 **_Maze.js_**
 
-```javascript=
+```javascript
 // インスタンスのデータを元に、DOMを生成
 drowMyself() {
   ++this.extendingCounter;
@@ -364,7 +365,9 @@ drowMyself() {
 
 **_Maze.js_** で定義したインスタンスメソッドは、 **_main.js_** で実行します。
 
-```javascript=
+**_main.js_**
+
+```javascript
 maze.generateGrid();
 maze.drowMyself();
 ```
@@ -375,7 +378,9 @@ maze.drowMyself();
 
 コンソールに迷路インスタンスの情報を出力してみましょう。
 
-```javascript=
+**_main.js_**
+
+```javascript
 console.log(maze);
 ```
 
@@ -391,7 +396,7 @@ maze.grid で参照可能な迷路構造が、描画した迷路構造と同じ�
 - 迷路インスタンスのメソッドを実行して、プロパティを更新
 - 迷路インスタンスの情報を元に迷路を表示
 
-迷路を生成するには、迷路クラスで定義したインスタンスメソッドを実行して、迷路インスタンスの情報を更新していきます。
+迷路を生成するには、迷路クラスで定義したインスタンスメソッドを実行して、迷路インスタンスのプロパティを更新していきます。
 次は、迷路を自動で生成するメソッドを実装していきましょう。
 
 [この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/RwPGPXG)
@@ -402,67 +407,370 @@ maze.grid で参照可能な迷路構造が、描画した迷路構造と同じ�
 
 ## 迷路の自動生成
 
-さて、では実際に maze インスタンスの情報をどのように変更していけばいいのでしょうか。
+ここまでの実装で、迷路の初期状態を生成することができました。
+次に、迷路の自動生成を実装していきましょう。
+迷路インスタンスのメソッドを実行して、プロパティを更新していきます。
 迷路を自動で生成するアルゴリズムはいくつかあるようなのですが、今回は「壁伸ばし法」を採用します。
-今回の実装手順は下記の通りです。
+壁伸ばし法で壁を拡張する処理のフローは、下記の通りです。
 
 ### `🧩アルゴリズム： 壁伸ばし法`
 
-1. row, column がともに偶数となるセルを、壁伸ばし開始地点(候補)としてリストアップ
-2. ランダムでリストからセルを選び、既存の壁かどうかを確かめる
-3. **壁の拡張(\*)** を繰り返し実行する
-   - 成功した場合、選んだセルはリストから削除
-   - 失敗した場合、拡張中の壁に関する変更を破棄して再度壁を作り直す
-4. 上記 1-3 の処理を、リストが空になるまで繰り返す
+**迷路生成のフロー**
+
+1. row, column がともに偶数となるセルを、壁伸ばし開始地点(候補)としてリストに追加
+2. ランダムでリストからセルを選び、壁かどうかを確認
+   - 壁でない場合、**3 の処理へ**
+   - 壁の場合、**5 の処理へ**
+3. 選んだセルを拡張中の壁に更新
+4. **壁の拡張**を実行
+   - 成功した場合、**5 の処理へ**
+   - 失敗した場合、**7 の処理へ**
+5. 拡張中の壁を壁に更新
+6. 選んだセルはリストから削除して、**8 の処理へ**
+7. 拡張中の壁を元に戻して、**2 の処理へ**
+8. リストが空かどうかを確認
+   - 空ではない場合、**2 の処理へ**
+   - 空の場合、**処理を終了**
 
 <p align="center">
-<img src="https://i.imgur.com/ZQgNqs2.png" width=50%>
+<img src="https://i.imgur.com/8oLFaYU.png" width=60%>
 </p>
 
-**(\*)壁の拡張**
+**壁の拡張のフロー**
 
-1. 壁を伸ばせるかどうかを 4 方向についてチェック
-   - 壁を伸ばせる方向がなければ、**壁伸ばし失敗**
-   - 壁を伸ばせる方向があれば、全てリストアップ
-2. ランダムでリストから壁を伸ばす方向を選び、選んだ方向に 2 マス進む
-3. 行き先が壁かどうかを判定
-   - 既存の壁と接続していなければ、 **壁の拡張(\*)** を再帰実行
-   - 既存の壁と接続した時点で壁伸ばし終了
-4. 既存の壁と接続したら、**壁伸ばし成功**
+1. 現在のセルから、4 方向全てについて壁を伸ばせるかどうか確認
+   - 壁を伸ばせる方向がある場合、**2 の処理へ**
+   - 壁を伸ばせる方向がなければ、**壁伸ばし失敗をリターン**
+2. 壁を伸ばせる方向を全てリストに追加
+3. ランダムでリストから壁を伸ばす方向を選ぶ
+4. 2 セル先までを拡張中の壁に更新
+5. 2 セル先が壁かどうかを確認
+   - 壁と接続していない場合、**1 の処理へ**
+   - 壁と接続した場合、**6 の処理へ**
+6. 拡張中の壁を、壁に更新
+7. **壁伸ばし成功をリターン**
 
 <p align="center">
-<img src="https://i.imgur.com/5eKsnnt.png" width=50%>
+<img src="https://i.imgur.com/nlb1ZJI.png" width=60%>
 </p>
 
-さて、まずは壁を生成するスタート地点となるセルの候補を列挙しましょう。
-条件は、row, column がともに偶数となるセルです。
+### フローをコードで書く
+
+壁を拡張する処理をフローで表したので、実際にコードを書いていきましょう。
+まずは、迷路生成のフローを書いていきます。
+
+**_Maze.js_**
+
+```javascript
+generateMaze() {
+  this.addStartCellList();
+
+  while (this.startCellList.length) {
+    let { randIndex, startRow, startColumn } = this.getStartCell();
+    let isExtendingSuccess = false;
+
+    if (this.grid[startRow][startColumn] === this.cellType.ExtendingStart) {
+      this.grid[startRow][startColumn] = this.cellType.ExtendingWall;
+      isExtendingSuccess = this.extendWall(startRow, startColumn);
+
+      if (isExtendingSuccess) {
+        this.updateExtendingWall(this.cellType.Wall);
+        this.removeStartCellList(randIndex);
+      } else {
+        this.updateExtendingWall(this.cellType.Path);
+      }
+    } else {
+      this.removeStartCellList(randIndex);
+    }
+  }
+}
+```
+
+<hr>
+
+generateMaze の最初の処理は、壁を生成するスタート地点となるセルの候補を列挙することです。
+addStartCellList()は、row, column ともに偶数となるセルを壁伸ばし開始地点(候補)としてリストに格納するメソッドです。
+
+**_Maze.js_**
+
+```javascript
+addStartCellList() {
+  for (let row = 1; row < this.HEIGHT - 1; row++) {
+    for (let column = 1; column < this.WIDTH - 1; column++) {
+      if (row % 2 === 0 && column % 2 === 0) {
+        this.startCellList.push([row, column]);
+        this.grid[row][column] = this.cellType.ExtendingStart;
+      }
+    }
+  }
+}
+```
+
 9 マス四方の場合、スタート地点の候補は下記の通りになります。
 
-**壁を生成するスタート地点となるセルの候補(9 マス四方の場合)**
 ![](https://i.imgur.com/8BVVE6E.png)
 
-紫のセルが全て壁に置き換わった時点で、迷路の生成は完了です。実際に上記の処理を実行してみましょう。
-すると、下記のようなプロセスで迷路ができていきます。最初にリストアップした紫のセルが、全て黒の壁に置き換わっていることが確認できますね。
-なお、スタートとゴールの位置は左上と右下にそれぞれ決定しました。
+迷路の自動生成では、壁の拡張を迷路が完成するまで繰り返し実行します。
+壁伸ばし開始地点(紫のセル)が全て壁に置き換わった時点で、迷路の生成は完了です。
 
-**壁の拡張過程(9 マス四方の場合)**
+<hr>
+
+removeStartCellList()は、壁の拡張が終わったらリストから壁を生成するスタート地点となったセルを削除します。
+
+**_Maze.js_**
+
+```javascript
+removeStartCellList(index) {
+    this.startCellList.splice(index, 1);
+}
+```
+
+<hr>
+
+removeStartCellList()は、壁の拡張が終わったら迷路の情報を更新する関数です。
+extendWall を実行中、拡張中の壁だけが ExtendingWall となるようにします。
+更新後の迷路は、cellType が Path と Wall のみになっているはずです。
+
+**_Maze.js_**
+
+```javascript
+updateExtendingWall(nextCellType) {
+  for (let row = 0; row < this.HEIGHT; row++) {
+    for (let column = 0; column < this.WIDTH; column++) {
+      if (this.grid[row][column] === this.cellType.ExtendingWall) {
+        this.grid[row][column] = nextCellType;
+
+        if (
+          nextCellType === this.cellType.Path &&
+          row % 2 === 0 &&
+          column % 2 === 0
+        ) {
+          this.grid[row][column] = this.cellType.ExtendingStart;
+        }
+      }
+    }
+  }
+}
+```
+
+<hr>
+
+次は、ランダムでリストからセルを選び、壁かどうかを確認しましょう。
+[分割代入](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)で代入したのは、addStartCellList の内ランダムに選んだインデックスと、セルの行列です。
+インデックスは、後の処理でリストから選んだセルを削除するために使います。
+また、行と列はセルの位置を示す情報ですので、壁の拡張をしながら更新していく値です。
+
+```javascript
+let { randIndex, startRow, startColumn } = this.getStartCell();
+```
+
+**_Maze.js_**
+
+```javascript
+getStartCell() {
+  let nextRandIndex = Math.floor(Math.random() * this.startCellList.length);
+  let nextStartRow = this.startCellList[nextRandIndex][0];
+  let nextStartColumn = this.startCellList[nextRandIndex][1];
+  return {
+    randIndex: nextRandIndex,
+    startRow: nextStartRow,
+    startColumn: nextStartColumn
+  };
+}
+```
+
+壁伸ばし開始地点を選んだら、壁の拡張を実行します。
+
+```javascript
+isExtendingSuccess = this.extendWall(startRow, startColumn);
+```
+
+ここで、壁を拡張するプロセスを確認しましょう。
+
 ![](https://i.imgur.com/M6UJytg.png)
+
+ランダムに選ばれた紫のセルから壁が伸びていく様子がわかります。
+そして、拡張中の壁は既存の壁にぶつかった時点で壁に更新します。
+この壁の拡張は、終了条件を満たすまで繰り返し実行します。
+最終的に、最初にリストアップした紫のセルが、全て黒の壁に置き換わっていることが確認できますね。
+
+では、壁の拡張をする関数を書きましょう。
+
+**_Maze.js_**
+
+```javascript
+extendWall(row, column) {
+  const DISTANCE = 2; // 進行距離
+  let isConnectedWall = false;
+  let clearDirectionList = this.addClearDirectionList(row, column, DISTANCE);
+
+  if (clearDirectionList.length) {
+    let rand = Math.floor(Math.random() * clearDirectionList.length);
+    ({ row, column, isConnectedWall } = this.updateExtendingWallOnDirection(
+      row,
+      column,
+      clearDirectionList[rand],
+      DISTANCE
+    ));
+
+    if (!isConnectedWall) {
+      return this.extendWall(row, column);
+    } else {
+      console.log('壁伸ばし成功');
+      return true;
+    }
+  } else {
+    console.log('壁伸ばし失敗');
+    return false;
+  }
+}
+```
+
+まずは、現在のセルから、4 方向全てについて壁を伸ばせるかどうか確認します。
+
+**_Maze.js_**
+
+```javascript
+addClearDirectionList(row, column, DISTANCE) {
+  const clearDirectionList = [];
+  // 上方向
+  if (this.grid[row - DISTANCE][column] !== this.cellType.ExtendingWall) {
+    clearDirectionList.push('UP');
+  }
+  // 下方向
+  if (this.grid[row + DISTANCE][column] !== this.cellType.ExtendingWall) {
+    clearDirectionList.push('DOWN');
+  }
+  // 左方向
+  if (this.grid[row][column - DISTANCE] !== this.cellType.ExtendingWall) {
+    clearDirectionList.push('LEFT');
+  }
+  // 右方向
+  if (this.grid[row][column + DISTANCE] !== this.cellType.ExtendingWall) {
+    clearDirectionList.push('RIGHT');
+  }
+  return clearDirectionList;
+}
+```
+
+壁を伸ばせる方向のみ、clearDirectionList に追加します。
+
+![](https://i.imgur.com/a7OyEQX.png)
+
+今度は宣言のない[分割代入](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)で、clearDirectionList の内ランダムに選んだ方向に 2 セル進んだ先のセルの行列と、壁と接続したかの判定結果を代入します。
+
+```javascript
+({ row, column, isConnectedWall } = this.updateExtendingWallOnDirection(
+  row,
+  column,
+  clearDirectionList[randIndex],
+  DISTANCE
+));
+```
+
+**_Maze.js_**
+
+```javascript
+updateExtendingWallOnDirection(row, column, direction, DISTANCE) {
+  let isConnectedWall;
+
+  switch (direction) {
+    case 'UP':
+      isConnectedWall =
+        this.grid[row - DISTANCE][column] === this.cellType.Wall;
+      for (let i = 0; i < DISTANCE; i++) {
+        this.grid[--row][column] = this.cellType.ExtendingWall;
+      }
+      break;
+    case 'DOWN':
+      isConnectedWall =
+        this.grid[row + DISTANCE][column] === this.cellType.Wall;
+      for (let i = 0; i < DISTANCE; i++) {
+        this.grid[++row][column] = this.cellType.ExtendingWall;
+      }
+      break;
+    case 'LEFT':
+      isConnectedWall =
+        this.grid[row][column - DISTANCE] === this.cellType.Wall;
+      for (let i = 0; i < DISTANCE; i++) {
+        this.grid[row][--column] = this.cellType.ExtendingWall;
+      }
+      break;
+    case 'RIGHT':
+      isConnectedWall =
+        this.grid[row][column + DISTANCE] === this.cellType.Wall;
+      for (let i = 0; i < DISTANCE; i++) {
+        this.grid[row][++column] = this.cellType.ExtendingWall;
+      }
+      break;
+  }
+  return {
+    row: row,
+    column: column,
+    isConnectedWall: isConnectedWall
+  };
+}
+```
+
+### 再帰関数の実行
+
+ここで、再度 extendWall の処理を確認します。
+下記の擬似コードの通り、extendWall のフローでは壁の更新処理があります。
+この更新結果に応じて、以降の処理が分岐していきます。
+更新処理を終えても壁と接続していない場合、更新後の行列を引数に指定して再度 extendWall を実行します。
+
+このように、自身の関数を呼び出す関数を再帰関数と呼びます。
+今回の例では、毎回異なる引数(セルの行列)とその時点での迷路の状態における計算結果を繰り返し出力します。
+
+```javascript
+extendWall(row, column) {
+  let isConnectedWall = false;
+
+  if (clearDirectionList.length) {
+    // ランダムな方向に壁を伸ばす処理を実行
+    // rowとcolumは進んだ先のセルの行列に更新
+    // 壁と接続したら、isConnectedWall = trueに更新
+
+    if (!isConnectedWall) {
+      return this.extendWall(row, column);
+    } else {
+      console.log('壁伸ばし成功');
+      return true;
+    }
+  } else {
+    console.log('壁伸ばし失敗');
+    return false;
+  }
+}
+```
+
+自動迷路生成プログラムでは、毎回違った構造の迷路を出力します。
+それは、以下の条件で再帰関数を実行しているからです。
+
+- 壁を伸ばす方向が毎回ランダムである
+- 迷路の状態が更新されるので実行時の状態が毎回異なる
+
+![](https://i.imgur.com/YBZypbB.png)
 
 ### `🚨既存の壁に到達しないパターン`
 
-実は、上記の方法でうまく壁を拡張できないパターンがあります。それは、**拡張中の壁に四方を囲まれてしまった場合**です。このパターンに陥った場合は、拡張中の壁に関する変更を破棄して再度壁を作り直します。
+壁の拡張のフローを確認すると、
+
+> 壁を伸ばせる方向がなければ、**壁伸ばし失敗をリターン**
+
+とありますが、それはどのような時に起こりうるでしょうか。
+
+それは、**拡張中の壁に四方を囲まれてしまった場合**です。
+このパターンに陥った場合は、拡張中の壁に関する変更を破棄して再度壁を作り直します。
 
 **既存の壁に到達しないパターン**
 ![](https://i.imgur.com/MI5I1Er.png)
 
-### `🕵️‍♂️テストを書いて動作を確認する`
+<!-- ### `👍テストを書いて動作を確認する`
 
-既存の壁に到達しないパターンの動作を実装しました。
-次は、上記のパターンで正しく挙動しているかを確認する必要があります。
-これまでは、実装した後にブラウザで動作を確認していました。
-しかし、ランダムで迷路を生成する過程で上記のパターンに陥る可能性は高くありません。
+さて、これまでは実装した後にブラウザで動作を確認していましたね。
+しかし、今回は壁伸ばしが本当に失敗した時にも正しく動作するのかを状況を再現して確認する必要があります。
+理由は、ランダムで迷路を生成する過程で上記のパターンに陥る可能性が高くないからです。
+
 9 マス四方の場合、四隅のスタート地点から時計回りと反時計回りに壁を生成したパターンが該当するので、4×2 の合計 8 パターンしかないのです。
-そこで、壁を拡張している最中に拡張中の壁に囲まれた状態を再現する必要があります。
-
-**テストしたい範囲(左図)とテストの擬似コード(右図)**
-![](https://i.imgur.com/zOSnoCU.png)
+そこで、壁を拡張している最中に拡張中の壁に囲まれた状態を再現する必要があるという訳です。 -->
