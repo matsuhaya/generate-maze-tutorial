@@ -612,6 +612,8 @@ extendWall(row, column) {
       clearDirectionList[rand],
       DISTANCE
     ));
+    //迷路の生成過程を描画する
+    this.drowMyself();
 
     if (!isConnectedWall) {
       return this.extendWall(row, column);
@@ -752,6 +754,49 @@ extendWall(row, column) {
 
 ![](https://i.imgur.com/YBZypbB.png)
 
+ここまで実装できたら、迷路の自動生成ができているはずです。
+せっかくなので、スタート地点とゴール地点を設定するプログラムも用意しましょう。
+
+**_Maze.js_**
+
+```javascript
+setUpperLeftStart() {
+  let startRow = 1;
+  let startColumn = 1;
+  this.start = [startRow, startColumn];
+  this.grid[startRow][startColumn] = this.cellType.Start;
+}
+
+setUnderRightGoal() {
+  let goalRow = this.HEIGHT - 2;
+  let goalColumn = this.WIDTH - 2;
+  this.goal = [goalRow, goalColumn];
+  this.grid[goalRow][goalColumn] = this.cellType.Goal;
+}
+```
+
+それでは、**_main.js_**で迷路インスタンスの generateMaze を実行してみましょう。
+
+**_main.js_**
+
+```javascript
+import { Maze } from './Maze.js';
+
+//サイズは必ず5以上の奇数で生成する
+const WIDTH = 9;
+const HEIGHT = 9;
+const maze = new Maze(WIDTH, HEIGHT);
+maze.generateGrid();
+maze.generateMaze();
+maze.setUpperLeftStart();
+maze.setUnderRightGoal();
+maze.drowMyself();
+```
+
+迷路の自動生成ができていれば、実行するごとに異なる迷路が表示されるはずです。
+
+![](https://i.imgur.com/lx3MqJw.png)
+
 ### `🚨既存の壁に到達しないパターン`
 
 壁の拡張のフローを確認すると、
@@ -867,7 +912,7 @@ generateMaze() {
 
 ![](https://i.imgur.com/zWEdcrw.png)
 
-drowMyself で描画すると、ブラウザで迷路の状態を確認できます。
-これで、壁の拡張が失敗しても壁の拡張をやり直すことができるので、処理が止まることがないですね。
+drowMyself で途中経過を描画すると、ブラウザで迷路の状態を確認できます。
+これで、壁の拡張が失敗しても壁の拡張をやり直すことができるので、迷路が完成するまで処理が止まることがないですね。
 
 ![](https://i.imgur.com/MI5I1Er.png)
