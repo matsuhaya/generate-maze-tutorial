@@ -760,17 +760,114 @@ extendWall(row, column) {
 
 とありますが、それはどのような時に起こりうるでしょうか。
 
+<p align="center">
+<img src="https://i.imgur.com/cROtwuS.png" width=80%>
+</p>
+
 それは、**拡張中の壁に四方を囲まれてしまった場合**です。
 このパターンに陥った場合は、拡張中の壁に関する変更を破棄して再度壁を作り直します。
 
-**既存の壁に到達しないパターン**
-![](https://i.imgur.com/MI5I1Er.png)
+![](https://i.imgur.com/XAgbuQB.png)
 
-<!-- ### `👍テストを書いて動作を確認する`
+### `👍テストを書いて動作を確認する`
 
 さて、これまでは実装した後にブラウザで動作を確認していましたね。
 しかし、今回は壁伸ばしが本当に失敗した時にも正しく動作するのかを状況を再現して確認する必要があります。
 理由は、ランダムで迷路を生成する過程で上記のパターンに陥る可能性が高くないからです。
-
 9 マス四方の場合、四隅のスタート地点から時計回りと反時計回りに壁を生成したパターンが該当するので、4×2 の合計 8 パターンしかないのです。
-そこで、壁を拡張している最中に拡張中の壁に囲まれた状態を再現する必要があるという訳です。 -->
+そこで、壁を拡張している最中に拡張中の壁に囲まれた状態を再現するコードを書く必要があるという訳です。
+
+今回は、テストを書くためのライブラリを使用せず、ブラウザの console 機能でテストを実行します。
+
+**_Maze.js_**
+
+```javascript
+extendWall_ng_falseClearDirectionListAndFalseIsConnectedWall() {
+  // 1.前提条件を満たす状態変更
+  // this.grid(4,4)が拡張中の壁に囲まれる状態にする
+  const DISTANCE = 2; // 進行距離
+  let isConnectedWall = false;
+  let row = 2;
+  let column = 2;
+  let extendingDirectionList = [
+    'DOWN',
+    'DOWN',
+    'RIGHT',
+    'RIGHT',
+    'UP',
+    'UP',
+    'LEFT',
+    'DOWN'
+  ];
+  this.grid[row][column] = this.cellType.ExtendingWall;
+
+  for (let i = 0; i < extendingDirectionList.length; i++) {
+    ({ row, column, isConnectedWall } = this.updateExtendingWallOnDirection(
+      row,
+      column,
+      extendingDirectionList[i],
+      DISTANCE
+    ));
+    this.drowMyself();
+  }
+
+  // 2.実行
+  let result = this.extendWall(4, 4);
+
+  // 3.結果表示
+  // 壁拡張中、拡張中の壁に囲まれたらテスト成功をコンソールに出力
+  if (!result) {
+    console.log('テスト成功:', this.grid);
+  } else {
+    console.log('テスト失敗:', this.grid);
+  }
+
+  // 4.結果をリターン
+  return result;
+}
+```
+
+generateMaze でテストを実行してみましょう。
+
+**_Maze.js_**
+
+```javascript
+generateMaze() {
+  this.addStartCellList();
+
+  while (this.startCellList.length) {
+    let { randIndex, startRow, startColumn } = this.getStartCell();
+    let isExtendingSuccess = false;
+
+    if (this.grid[startRow][startColumn] === this.cellType.ExtendingStart) {
+      // 一旦コメントアウト
+      // this.grid[startRow][startColumn] = this.cellType.ExtendingWall;
+      // isExtendingSuccess = this.extendWall(startRow, startColumn);
+
+      // falseがリターンされるテスト
+      isExtendingSuccess = this.extendWall_ng_falseClearDirectionListAndFalseIsConnectedWall();
+
+      if (isExtendingSuccess) {
+        this.updateExtendingWall(this.cellType.Wall);
+        this.removeStartCellList(randIndex);
+      } else {
+        console.log('拡張中の壁を元にもどし、再度壁を拡張します');
+        this.updateExtendingWall(this.cellType.Path);
+        return; // テストを実行する時はreturnを記述してwhileループを抜ける
+      }
+    } else {
+      this.removeStartCellList(randIndex);
+    }
+  }
+}
+```
+
+実行後にブラウザの console を確認してみましょう。
+想定通り、壁伸ばしが失敗して、テストが成功していることを確認できました。
+
+![](https://i.imgur.com/zWEdcrw.png)
+
+drowMyself で描画すると、ブラウザで迷路の状態を確認できます。
+これで、壁の拡張が失敗しても壁の拡張をやり直すことができるので、処理が止まることがないですね。
+
+![](https://i.imgur.com/MI5I1Er.png)
