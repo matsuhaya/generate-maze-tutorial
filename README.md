@@ -916,3 +916,9 @@ drowMyself で途中経過を描画すると、ブラウザで迷路の状態を
 これで、壁の拡張が失敗しても壁の拡張をやり直すことができるので、迷路が完成するまで処理が止まることがないですね。
 
 ![](https://i.imgur.com/MI5I1Er.png)
+
+[この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/GRJNwVM)
+
+**_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/ZEGBmgd)
+
+<br>
