@@ -22,7 +22,9 @@
 
 [**最終的な成果物を確認する**](http://grayhorse5.sakura.ne.jp/generate-maze/)
 
-<!-- ![正解ルート表示画面](https://i.imgur.com/6uhNFuT.png) -->
+<p align="center">
+<img src="./img/readme_本チュートリアルの説明_img_01.png" alt="最終的な成果物" width=50%>
+</p>
 
 ### 前提知識
 
@@ -161,7 +163,9 @@ class の説明
 - -start: 迷路のスタートを表す。青色。
 - -goal: 迷路のゴールを表す。赤色。
 
-![](https://i.imgur.com/lnewAuw.png)
+<p align="center">
+<img src="./img/readme_迷路の表示_img_01.png" alt="迷路の装飾">
+</p>
 
 このように、セル（行と列の交わる箇所）を壁や通路として定義し、定義に応じた装飾をすることで迷路を表を用いて表現することができます。
 
@@ -236,12 +240,16 @@ Maze クラスでは、迷路の構造に関する情報を定義します。
 オセロや将棋盤のような盤面を表現するのには、二次元配列が便利です。
 今回は、下記のように行(Row)と列(Column)で座標を表すように定義します。
 
-![](https://i.imgur.com/Y4dDWyX.png)
+<p align="center">
+<img src="./img/readme_迷路の表示_img_02.png" alt="セルを行列で表現">
+</p>
 
 二次元配列で指定したセルの値は、cellType で用意している状態を表します。
 壁にしたいセルの値は 1 で、ゴールにしたいセルの値は"G"です。
 
-![](https://i.imgur.com/XQm5ttv.png)
+<p align="center">
+<img src="./img/readme_迷路の表示_img_03.png" alt="迷路を二次元配列で表現">
+</p>
 
 ### `👍gridのタイプをリスト形式で定義する`
 
@@ -374,7 +382,9 @@ maze.drowMyself();
 
 ブラウザで確認すると、大外が壁になった迷路が描画できているはずです。
 
-![](https://i.imgur.com/G9w5wWA.png)
+<p align="center">
+<img src="./img/readme_迷路の表示_img_04.png" alt="初期状態の9マス四方の迷路">
+</p>
 
 コンソールに迷路インスタンスの情報を出力してみましょう。
 
@@ -384,9 +394,11 @@ maze.drowMyself();
 console.log(maze);
 ```
 
-maze.grid で参照可能な迷路構造が、描画した迷路構造と同じであることが確認できますね。
+maze.grid で参照可能な二次元配列の迷路構造が、描画した迷路構造と同じであることが確認できますね。
 
-![](https://i.imgur.com/W8NAxqL.png)
+<p align="center">
+<img src="./img/readme_迷路の表示_img_05.png" alt="コンソール画面の確認">
+</p>
 
 これまでの手順で、二次元配列で迷路を表現できるということがわかりました。
 迷路生成プログラムの流れを整理してみましょう。
@@ -433,7 +445,7 @@ maze.grid で参照可能な迷路構造が、描画した迷路構造と同じ�
    - 空の場合、**処理を終了**
 
 <p align="center">
-<img src="https://i.imgur.com/8oLFaYU.png" width=60%>
+<img src="./img/readme_迷路の作成_img_01.png" alt="迷路生成のフロー" width=60%>
 </p>
 
 **壁の拡張のフロー**
@@ -451,7 +463,7 @@ maze.grid で参照可能な迷路構造が、描画した迷路構造と同じ�
 7. **壁伸ばし成功をリターン**
 
 <p align="center">
-<img src="https://i.imgur.com/nlb1ZJI.png" width=60%>
+<img src="./img/readme_迷路の作成_img_02.png" alt="壁の拡張のフロー" width=60%>
 </p>
 
 ### フローをコードで書く
@@ -506,9 +518,11 @@ addStartCellList() {
 }
 ```
 
-9 マス四方の場合、スタート地点の候補は下記の通りになります。
+9 マス四方の場合、壁を生成するスタート地点の候補は下記の通りになります。
 
-![](https://i.imgur.com/8BVVE6E.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_03.png" alt="壁を生成するスタート地点候補" >
+</p>
 
 迷路の自動生成では、壁の拡張を迷路が完成するまで繰り返し実行します。
 壁伸ばし開始地点(紫のセル)が全て壁に置き換わった時点で、迷路の生成は完了です。
@@ -587,7 +601,9 @@ isExtendingSuccess = this.extendWall(startRow, startColumn);
 
 ここで、壁を拡張するプロセスを確認しましょう。
 
-![](https://i.imgur.com/M6UJytg.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_04.png" alt="壁を拡張するプロセス">
+</p>
 
 ランダムに選ばれた紫のセルから壁が伸びていく様子がわかります。
 そして、拡張中の壁は既存の壁にぶつかった時点で壁に更新します。
@@ -657,7 +673,9 @@ addClearDirectionList(row, column, DISTANCE) {
 
 壁を伸ばせる方向のみ、clearDirectionList に追加します。
 
-![](https://i.imgur.com/a7OyEQX.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_05.png" alt="壁を伸ばせる方向">
+</p>
 
 今度は宣言のない[分割代入](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)で、clearDirectionList の内ランダムに選んだ方向に 2 セル進んだ先のセルの行列と、壁と接続したかの判定結果を代入します。
 
@@ -752,7 +770,9 @@ extendWall(row, column) {
 - 壁を伸ばす方向が毎回ランダムである
 - 迷路の状態が更新されるので実行時の状態が毎回異なる
 
-![](https://i.imgur.com/YBZypbB.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_06.png" alt="再帰関数の条件">
+</p>
 
 ここまで実装できたら、迷路の自動生成ができているはずです。
 せっかくなので、スタート地点とゴール地点を設定するプログラムも用意しましょう。
@@ -795,7 +815,9 @@ maze.drowMyself();
 
 迷路の自動生成ができていれば、実行するごとに異なる迷路が表示されるはずです。
 
-![](https://i.imgur.com/lx3MqJw.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_07.png" alt="迷路作成実行後">
+</p>
 
 ### `🚨既存の壁に到達しないパターン`
 
@@ -806,13 +828,15 @@ maze.drowMyself();
 とありますが、それはどのような時に起こりうるでしょうか。
 
 <p align="center">
-<img src="https://i.imgur.com/cROtwuS.png" width=80%>
+<img src="./img/readme_迷路の作成_img_08.png" alt="壁伸ばしの失敗フロー">
 </p>
 
 それは、**拡張中の壁に四方を囲まれてしまった場合**です。
 このパターンに陥った場合は、拡張中の壁に関する変更を破棄して再度壁を作り直します。
 
-![](https://i.imgur.com/XAgbuQB.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_09.png" alt="壁伸ばしの失敗パターン">
+</p>
 
 ### `👍テストを書いて動作を確認する`
 
@@ -910,12 +934,16 @@ generateMaze() {
 実行後にブラウザの console を確認してみましょう。
 想定通り、壁伸ばしが失敗して、テストが成功していることを確認できました。
 
-![](https://i.imgur.com/zWEdcrw.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_10.png" alt="壁伸ばし失敗のコンソール画面">
+</p>
 
 drowMyself で途中経過を描画すると、ブラウザで迷路の状態を確認できます。
 これで、壁の拡張が失敗しても壁の拡張をやり直すことができるので、迷路が完成するまで処理が止まることがないですね。
 
-![](https://i.imgur.com/MI5I1Er.png)
+<p align="center">
+<img src="./img/readme_迷路の作成_img_11.png" alt="壁の拡張やり直し">
+</p>
 
 [この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/GRJNwVM)
 
