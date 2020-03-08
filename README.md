@@ -72,6 +72,7 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 ```javascript
 <!DOCTYPE html>
   <body>
+    <link rel="stylesheet" href="style.css">
     <table class="maze">
       <tbody>
         <tr>
