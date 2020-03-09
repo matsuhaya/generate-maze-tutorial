@@ -225,7 +225,7 @@ export class Maze {
       Goal: 'G',
       Path: 0,
       Wall: 1,
-      Extending: 2,
+      ExtendingWall: 2,
       ExtendingStart: 3
     };
     this.extendingCounter = 0; // 迷路の壁を拡張するたびにカウンターが増加する
@@ -286,20 +286,20 @@ this.cellType = {
   Goal: 'G',
   Path: 0,
   Wall: 1,
-  Extending: 2,
+  ExtendingWall: 2,
   ExtendingStart: 3
 };
 ```
 
 cellType の説明
 
-- Extending: 拡張中の壁であることを表す。
+- ExtendingWall: 拡張中の壁であることを表す。
 - ExtendingStart: 壁を拡張する時の拡張開始位置候補であることを表す。
 
 例として、リスト形式で表示しない場合のプログラムの一部を示します。
 
 ```javascript
-// 指定セルがWallではないなら、Extendingに状態を変更する
+// 指定セルがWallではないなら、ExtendingWallに状態を変更する
 if (this.grid[row][column] !== 1) {
   this.grid[row][column] = 2;
   isExtendingSuccess = this.extendWall(row, column);
@@ -309,9 +309,9 @@ if (this.grid[row][column] !== 1) {
 次に、リスト形式で表示した場合のプログラムの一部です。
 
 ```javascript
-// 指定セルがWallではないなら、Extendingに状態を変更する
+// 指定セルがWallではないなら、ExtendingWallに状態を変更する
 if (this.grid[row][column] !== this.cellType.Wall) {
-  this.grid[row][column] = this.cellType.Extending;
+  this.grid[row][column] = this.cellType.ExtendingWall;
 }
 ```
 
@@ -375,8 +375,8 @@ drowMyself() {
     for (let column = 0; column < this.WIDTH; column++) {
       if (this.grid[row][column] === this.cellType.Wall) {
         tr.append($('<td class="maze-cell -wall"></td>'));
-      } else if (this.grid[row][column] === this.cellType.Extending) {
-        tr.append($('<td class="maze-cell -extending"></td>'));
+      } else if (this.grid[row][column] === this.cellType.ExtendingWall) {
+        tr.append($('<td class="maze-cell -extending-wall"></td>'));
       } else if (this.grid[row][column] === this.cellType.ExtendingStart) {
         tr.append($('<td class="maze-cell -extending-start"></td>'));
       } else if (this.grid[row][column] === 'S') {
