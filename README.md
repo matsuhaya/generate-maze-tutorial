@@ -133,8 +133,8 @@ HTML, CSS, JavaScript, jQuery を扱うのに慣れていることを想定し�
 }
 
 .maze-cell {
-  width: 50px;
-  height: 50px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   border: 1px solid #ddd;
 }
