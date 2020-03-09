@@ -817,7 +817,130 @@ setUnderRightGoal() {
 }
 ```
 
-それでは、**_main.js_**で迷路インスタンスの generateMaze を実行してみましょう。
+これで、迷路クラスのメソッドを定義できました。
+実行する前に、**_index.html_** と **_main.css_** を次の通りに修正しましょう。
+
+**_index.html_**
+
+```html
+<!DOCTYPE html>
+  <link rel="stylesheet" href="style.css">
+  <body>
+    <div class="description">
+      <ul class="description__list">
+        <li class="description__list-item">
+          <span class="color-blue">■</span>：スタート
+        </li>
+        <li class="description__list-item">
+          <span class="color-red">■</span>：ゴール
+        </li>
+        <li class="description__list-item">
+          <span class="color-gray">■</span>：拡張中の壁
+        </li>
+        <li class="description__list-item">
+          <span class="color-purple">■</span
+          >：壁を作成するスタート地点となるセルの候補
+        </li>
+      </ul>
+    </div>
+
+    <div class="maze-wrapper"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
+```
+
+**_main.css_**
+
+```css
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.description {
+  margin: 16px auto;
+  text-align: center;
+  display: block;
+}
+
+.description__list {
+  padding-left: 0;
+  list-style: none;
+  display: inline-block;
+}
+
+.description__list-item {
+  text-align: left;
+}
+
+.color-blue {
+  color: #00f;
+}
+
+.color-red {
+  color: #f00;
+}
+
+.color-gray {
+  color: #808080;
+}
+
+.color-purple {
+  color: #a757a8;
+}
+
+.maze {
+  border-collapse: collapse;
+  margin: 20px auto 0;
+}
+
+.maze-cell {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid #ddd;
+}
+
+.maze-cell.-wall {
+  background-color: #000;
+}
+
+.maze-cell.-extending-wall {
+  background-color: #808080;
+}
+
+.maze-cell.-extending-start {
+  background-color: #a757a8;
+}
+
+.maze-cell.-path {
+  background-color: #fff;
+}
+
+.maze-cell.-answer-route.show {
+  background-color: #0f0;
+}
+
+.maze-cell.-start {
+  background-color: #00f;
+}
+
+.maze-cell.-goal {
+  background-color: #f00;
+}
+
+.maze-wrapper {
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+```
+
+それでは、 **_main.js_** で迷路インスタンスの generateMaze を実行してみましょう。
 
 **_main.js_**
 
