@@ -174,6 +174,27 @@ class の説明
 
 HTML と CSS で迷路を表示することができました。
 しかし、このままでは動的に生成した迷路を表示させることができません。
+ここからは動的に生成する迷路を表示するプログラムを書いていきましょう。
+
+まずは、 **_index.html_** を下記のように修正しましょう。
+クラス名"maze-wrapper"の div 要素の中身は空っぽです。
+この中身をプログラムで生成していきます。
+CSS だけでなく、jQuery と **_main.js_** を読み込んでいることにも注意してください。
+
+**_index.html_**
+
+```html
+<!DOCTYPE html>
+  <link rel="stylesheet" href="style.css">
+  <body>
+    <div class="maze-wrapper"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
+```
+
 これから、JavaScript で迷路の中身を実装していきましょう。
 用意する JavaScript のファイルは２つあります。
 **_main.js_** と **_Maze.js_** です。
