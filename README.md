@@ -11,8 +11,8 @@
 このチュートリアルは下記のセクションに分かれています。
 
 1. 迷路の表示： JavaScript で生成した迷路情報を HTML と CSS で表示させます。
-2. 迷路の自動生成： 迷路を自動生成するプログラムを実装します。
-3. 迷路の自動探索： 迷路を自動生成するプログラムを実装します。
+2. 迷路の自動生成： 迷路構造を自動生成するプログラムを実装します。
+3. 迷路の自動探索： 迷路の正解ルートを自動探索するプログラムを実装します。
 
 ### これから作る成果物
 
@@ -379,9 +379,9 @@ drowMyself() {
         tr.append($('<td class="maze-cell -extending-wall"></td>'));
       } else if (this.grid[row][column] === this.cellType.ExtendingStart) {
         tr.append($('<td class="maze-cell -extending-start"></td>'));
-      } else if (this.grid[row][column] === 'S') {
+      } else if (this.grid[row][column] === this.cellType.Start) {
         tr.append($('<td class="maze-cell -start"></td>'));
-      } else if (this.grid[row][column] === 'G') {
+      } else if (this.grid[row][column] === this.cellType.Goal) {
         tr.append($('<td class="maze-cell -goal"></td>'));
       } else {
         tr.append($('<td class="maze-cell -path"></td>'));
@@ -419,7 +419,7 @@ console.log(maze);
 maze.grid で参照可能な二次元配列の迷路構造が、描画した迷路構造と同じであることが確認できますね。
 
 <p align="center">
-<img src="./img/readme_迷路の表示_img_05.png" alt="コンソール画面の確認">
+<img src="./img/readme_迷路の表示_img_05.png" alt="コンソール画面の確認" width=50%>
 </p>
 
 これまでの手順で、二次元配列で迷路を表現できるということがわかりました。
@@ -1095,3 +1095,113 @@ drowMyself で途中経過を描画すると、ブラウザで迷路の状態を
 **_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/ZEGBmgd)
 
 <br>
+
+## 迷路の自動探索
+
+迷路の自動生成ができたので、次は正解ルートの自動探索を実装します。
+正解ルートの探索のために、新たに **_Explorer.js_** を用意します。
+
+**_Explorer.js_** は迷路探索のクラス(Explorer クラス)を定義するファイルです。
+役割は、迷路構造を元に正解ルートを探索して、正解ルートの情報を迷路情報に更新することです。
+Explorer は、Maze の地図を見ながら正解ルートを探索し、ゴールに到達したらその道を Maze に報告するというイメージです。
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_01.png" alt="Explorer.jsとMaze.js">
+</p>
+
+**_Explorer.js_**
+
+```javascript
+export default class Explorer {
+  // mazeの情報からexplorerを生成する
+  // ObjectはDeepCopyする
+  constructor(WIDTH, HEIGHT) {
+    this.WIDTH = WIDTH;
+    this.HEIGHT = HEIGHT;
+    this.grid = []; // cellTypeを格納した二次元配列
+    this.start = []; // スタート地点の[row, column]
+    this.beforeGoal = []; // ゴール手前の[row, column]
+    this.cellType = {
+      Start: 'S',
+      Goal: 'G',
+      Path: 0,
+      Wall: 1,
+      AnswerRoute: 'A',
+      FromUp: 'U',
+      FromRight: 'R',
+      FromDown: 'D',
+      FromLeft: 'L'
+    };
+  }
+}
+```
+
+### `👍Explorerの迷路構造は、Mazeの迷路構造をディープコピーする`
+
+上記のフロー図で**迷路構造をコピー**とありますが、ここで注意すべきはシャローコピーではなくディープコピーをするという点です。
+迷路構造は二次元配列なので、シャローコピーしてしまうと Explorer インスタンス の変更が Maze インスタンス に影響を与えてしまいます。
+下記に、それぞれの例を示します。
+
+**シャローコピーの例**
+
+```javascript
+let a = [[1, 1], 2, 3];
+let b = Array.from(a);
+
+console.log(a); // => [[1, 1], 2, 3]
+console.log(b); // => [[1, 1], 2, 3]
+console.log(a === b); // => false
+
+b[0][1] = 'X';
+b[2] = 'X';
+
+console.log(a); // => [[ 1, 'X'], 2, 3]
+console.log(b); // => [[ 1, 'X'], 2, 'X']
+```
+
+**ディープコピーの例**
+
+```javascript
+let a = [[1, 1], 2, 3];
+let b = JSON.parse(JSON.stringify(a));
+
+console.log(a); // => [[1, 1], 2, 3]
+console.log(b); // => [[1, 1], 2, 3]
+
+b[0][1] = 'X';
+b[2] = 'X';
+
+console.log(a); // => [[1, 1], 2, 3]
+console.log(b); // => [[1, 'X'], 2, 'X']
+```
+
+これから迷路の自動探索をするメソッドを実装していきますが、Explorer メソッドで変更するのは、Explorer プロパティです。
+Explorer プロパティをディープコピーで定義することで、Maze プロパティに影響を与えないようにします。
+
+**_Explorer.js_**
+
+```javascript
+deepCopyMaze(grid, start, goal) {
+  // 二次元配列のDeepCopy
+  this.grid = JSON.parse(JSON.stringify(grid));
+  $.extend(this.start, start);
+}
+```
+
+Explorer クラスのインスタンスを生成し、インスタンスメソッドを **_main.js_** で実行します。
+
+**_main.js_**
+
+```javascript
+import Explorer from './Explorer.js';
+
+const explorer = new Explorer(maze.WIDTH, maze.HEIGHT);
+explorer.deepCopyMaze(maze.grid, maze.start);
+console.log('explorer:', explorer);
+```
+
+コンソールで出力して確認すると、迷路構造をコピーできていることがわかります。
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_02.png" alt="grid構造の比較" width=50%>
+</p>
