@@ -1340,3 +1340,74 @@ checkNextCell(row, column) {
 <p align="center">
 <img src="./img/readme_迷路の自動探索_img_05.png" alt="幅優先探索のフロー説明">
 </p>
+
+### スタートからゴールまでの道のりを更新する
+
+探索が終了したら、ゴールまでの道のりを更新します。
+探索時につけた探索済の印で、どこからきたのかが追えるようになっています。
+**Explorer.beforeGoal** からきた道を辿って、スタート地点に戻る処理を実装しましょう。
+
+```javascript
+updateAnswerRoute() {
+  let [row, column] = this.beforeGoal;
+
+  // ゴールからスタートの道を辿り、AnswerRouteに更新
+  while (this.grid[row][column] !== this.cellType.Start) {
+    switch (this.grid[row][column]) {
+      case this.cellType.FromUp:
+        this.grid[row][column] = this.cellType.AnswerRoute;
+        --row;
+        break;
+      case this.cellType.FromRight:
+        this.grid[row][column] = this.cellType.AnswerRoute;
+        ++column;
+        break;
+      case this.cellType.FromDown:
+        this.grid[row][column] = this.cellType.AnswerRoute;
+        ++row;
+        break;
+      case this.cellType.FromLeft:
+        this.grid[row][column] = this.cellType.AnswerRoute;
+        --column;
+        break;
+    }
+  }
+
+  // AnswerRoute以外の探索済の印は、全てPathに更新
+  for (let row = 0; row < this.HEIGHT; row++) {
+    for (let column = 0; column < this.WIDTH; column++) {
+      if (
+        this.grid[row][column] === this.cellType.FromUp ||
+        this.grid[row][column] === this.cellType.FromDown ||
+        this.grid[row][column] === this.cellType.FromLeft ||
+        this.grid[row][column] === this.cellType.FromRight
+      ) {
+        this.grid[row][column] = this.cellType.Path;
+      }
+    }
+  }
+}
+```
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_06.png" alt="ゴール探索の説明" width=60%>
+</p>
+
+**_main.js_** で実行して、迷路構造が更新されているかを確認しましょう。
+
+**_main.js_**
+
+```javascript
+explorer.breadthFirstSearch();
+explorer.updateAnswerRoute();
+```
+
+下記のように、コンソールで出力すると正解ルートが更新できているのを確認できます。
+
+```javascript
+console.log('explorer.grid:', JSON.parse(JSON.stringify(explorer.grid)));
+```
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_07.png" alt="正解ルートの確認" width=60%>
+</p>
