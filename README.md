@@ -1250,3 +1250,93 @@ Explorer インスタンスのメソッドを実行して、プロパティを�
 <p align="center">
 <img src="./img/readme_迷路の自動探索_img_04.png" alt="幅優先探索のフロー" width=60%>
 </p>
+
+### フローをコードで書く
+
+迷路を自動で探索する処理をフローで表したので、実際にコードを書いていきましょう。
+まずは、幅優先探索の処理を下記に示します。
+
+**_Explorer.js_**
+
+```javascript
+breadthFirstSearch(start) {
+  let searchQueue = [start];
+
+  while (searchQueue.length) {
+    let [row, column] = searchQueue.shift();
+
+    if (this.grid[row][column] === this.cellType.Goal) {
+      return;
+    }
+
+    searchQueue.push(...this.checkNextCell(row, column));
+  }
+}
+```
+
+<hr>
+
+次に、隣接セル探索の処理を下記に示します。
+
+**_Explorer.js_**
+
+```javascript
+checkNextCell(row, column) {
+  const nextSearchQueue = [];
+  const DISTANCE = 1; // 探索距離
+
+  for (let i = 0; i < 4; i++) {
+    let nextRow;
+    let nextColumn;
+    let nextcellType;
+    if (i === 0) {
+      // 上方向
+      nextRow = row - DISTANCE;
+      nextColumn = column;
+      nextcellType = this.cellType.FromDown;
+    } else if (i === 1) {
+      // 右方向
+      nextRow = row;
+      nextColumn = column + DISTANCE;
+      nextcellType = this.cellType.FromLeft;
+    } else if (i === 2) {
+      // 下方向
+      nextRow = row + DISTANCE;
+      nextColumn = column;
+      nextcellType = this.cellType.FromUp;
+    } else if (i === 3) {
+      // 左方向
+      nextRow = row;
+      nextColumn = column - DISTANCE;
+      nextcellType = this.cellType.FromRight;
+    }
+
+    if (this.grid[nextRow][nextColumn] === this.cellType.Path) {
+      this.grid[nextRow][nextColumn] = nextcellType;
+      nextSearchQueue.push([nextRow, nextColumn]);
+    } else if (this.grid[nextRow][nextColumn] === this.cellType.Goal) {
+      this.beforeGoal = [row, column];
+      nextSearchQueue.push([nextRow, nextColumn]);
+      return nextSearchQueue;
+    }
+  }
+
+  return nextSearchQueue;
+}
+```
+
+幅優先探索の大まかな流れを下記に示します。
+
+探索順序をみると、起点となるスタート地点から網羅的にゴールを探索しているのがわかります。
+下記の左図の場合、13 回目の探索でゴールを見つけることができたので、その時点で探索を終了します。
+
+探索後は、探索済の印をつけます。
+下記の中央図の通り、どこからきたのかがわかるような印にすると、あとでゴールから道筋を辿ることができます。
+そのために、ゴール地点手前のセルを**Explorer.beforeGoal**に記録しておきましょう。
+`記号の意味は、U: UP, D: DOWN, L: LEFT, R: RIGHT`
+
+探索終了時は、迷路構造が下記の右図の通りになります。
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_05.png" alt="幅優先探索のフロー説明">
+</p>
