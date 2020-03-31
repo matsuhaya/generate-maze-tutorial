@@ -270,7 +270,7 @@ Maze クラスでは、迷路の構造に関する情報を定義します。
 壁にしたいセルの値は 1 で、ゴールにしたいセルの値は"G"です。
 
 <p align="center">
-<img src="./img/readme_迷路の表示_img_03.png" alt="迷路を二次元配列で表現">
+<img src="./img/readme_迷路の表示_img_03.png" alt="迷路を二次元配列で表現" width=50%>
 </p>
 
 ### `👍gridのタイプをリスト形式で定義する`
@@ -405,7 +405,7 @@ maze.drowMyself();
 ブラウザで確認すると、大外が壁になった迷路が描画できているはずです。
 
 <p align="center">
-<img src="./img/readme_迷路の表示_img_04.png" alt="初期状態の9マス四方の迷路">
+<img src="./img/readme_迷路の表示_img_04.png" alt="初期状態の9マス四方の迷路" width=50%>
 </p>
 
 コンソールに迷路インスタンスの情報を出力してみましょう。
@@ -1107,7 +1107,7 @@ drowMyself で途中経過を描画すると、ブラウザで迷路の状態を
 Explorer は、Maze の地図を見ながら正解ルートを探索し、ゴールに到達したらその道を Maze に報告するというイメージです。
 
 <p align="center">
-<img src="./img/readme_迷路の自動探索_img_01.png" alt="Explorer.jsとMaze.js">
+<img src="./img/readme_迷路の自動探索_img_01.png" alt="Explorer.jsとMaze.js" width=70%>
 </p>
 
 **_Explorer.js_**
@@ -1229,7 +1229,7 @@ Explorer インスタンスのメソッドを実行して、プロパティを�
    - 空の場合、**処理を終了**
 
 <p align="center">
-<img src="./img/readme_迷路の自動探索_img_03.png" alt="迷路自動探索のフロー" width=60%>
+<img src="./img/readme_迷路の自動探索_img_03.png" alt="迷路自動探索のフロー" width=50%>
 </p>
 
 **隣接セル探索のフロー**
@@ -1248,7 +1248,7 @@ Explorer インスタンスのメソッドを実行して、プロパティを�
 7. **探索済リストをリターン**
 
 <p align="center">
-<img src="./img/readme_迷路の自動探索_img_04.png" alt="幅優先探索のフロー" width=60%>
+<img src="./img/readme_迷路の自動探索_img_04.png" alt="幅優先探索のフロー" width=50%>
 </p>
 
 ### フローをコードで書く
@@ -1411,3 +1411,278 @@ console.log('explorer.grid:', JSON.parse(JSON.stringify(explorer.grid)));
 <p align="center">
 <img src="./img/readme_迷路の自動探索_img_07.png" alt="正解ルートの確認" width=60%>
 </p>
+
+### 正解ルートを描画する
+
+ここまでは、Explorer クラスで迷路の正解ルートを探索するプログラムを実装しました。
+最後に、正解ルートを描画する処理を実装してプログラムを完成させましょう。
+
+まずは、Explorer クラスの迷路構造を Maze クラスの迷路構造に反映します。
+Maze の迷路構造は、Explorer の迷路構造をディープコピーしましょう。
+
+**_Maze.js_**
+
+```javascript
+updateMazeAnserRoute(grid) {
+  this.grid = JSON.parse(JSON.stringify(grid));
+}
+```
+
+**_main.js_**
+
+```javascript
+maze.updateMazeAnserRoute(explorer.grid);
+```
+
+これで、Maze クラスの迷路構造に正解ルートの情報が反映されました。
+Maze クラスには描画メソッドがあるので、下記のように修正します。
+
+**_Maze.js_**
+
+```javascript
+// インスタンスのデータを元に、DOMを生成
+drowMyself() {
+  ++this.extendingCounter;
+  let className = `maze step${this.extendingCounter}`;
+  $('.maze-wrapper').append(
+    $(`<table class="${className}">`).append($('<tbody>'))
+  );
+
+  for (let row = 0; row < this.HEIGHT; row++) {
+    let tr = $('<tr>');
+    for (let column = 0; column < this.WIDTH; column++) {
+      if (this.grid[row][column] === this.cellType.Wall) {
+        tr.append($('<td class="maze-cell -wall"></td>'));
+      } else if (this.grid[row][column] === this.cellType.ExtendingWall) {
+        tr.append($('<td class="maze-cell -extending-wall"></td>'));
+      } else if (this.grid[row][column] === this.cellType.ExtendingStart) {
+        tr.append($('<td class="maze-cell -extending-start"></td>'));
+      } else if (this.grid[row][column] === this.cellType.Start) {
+        tr.append($('<td class="maze-cell -start"></td>'));
+      } else if (this.grid[row][column] === this.cellType.Goal) {
+        tr.append($('<td class="maze-cell -goal"></td>'));
+      } else if (this.grid[row][column] === this.cellType.AnswerRoute) {
+        tr.append($('<td class="maze-cell -answer"></td>'));
+      } else {
+        tr.append($('<td class="maze-cell -path"></td>'));
+      }
+    }
+
+    $(`.maze.step${this.extendingCounter} tbody`).append(tr);
+  }
+}
+```
+
+正解ルートは、ボタンを押して表示と非表示を切り替えるようにしたいです。
+表示切り替えボタンは、下記の通り実装します。
+
+**_main.js_**
+
+```javascript
+$('.answer').click(e => {
+  e.preventDefault();
+  $(e.target).toggleClass('active');
+  $('.maze-cell.-answer').toggleClass('show');
+});
+```
+
+最後に **_main.js_** , **_index.html_** , **_style.css_** を下記のように修正します。
+
+- 迷路の WIDTH と HEIGHT を 49 に変更
+- セルの width と height を 10px に変更
+- セルの枠線スタイルをコメントアウト
+- AnswerRoute 関連の CSS 追記
+- 表示切り替えボタンの CSS 追記
+
+コードを記載するので、関数の実行順序やスタイルに誤りがないかを確認しましょう。
+
+**_main.js_**
+
+```javascript
+import { Maze } from './Maze.js';
+import Explorer from './Explorer.js';
+
+// 正解ルートの表示切り替え
+$('.answer').click(e => {
+  e.preventDefault();
+  $(e.target).toggleClass('active');
+  $('.maze-cell.-answer').toggleClass('show');
+});
+
+//サイズは必ず5以上の奇数で生成する
+const WIDTH = 49;
+const HEIGHT = 49;
+
+const maze = new Maze(WIDTH, HEIGHT);
+maze.generateGrid();
+maze.generateMaze();
+maze.setUpperLeftStart();
+maze.setUnderRightGoal();
+
+const explorer = new Explorer(maze.WIDTH, maze.HEIGHT);
+explorer.deepCopyMaze(maze.grid, maze.start);
+explorer.breadthFirstSearch();
+explorer.updateAnswerRoute();
+
+maze.updateMazeAnserRoute(explorer.grid);
+maze.drowMyself();
+```
+
+**_index.html_**
+
+```html
+<!DOCTYPE html>
+  <link rel="stylesheet" href="css/style.css" />
+  <body>
+    <div class="description">
+      <ul class="description__list">
+        <li class="description__list-item">
+          <span class="color-blue">■</span>：スタート
+        </li>
+        <li class="description__list-item">
+          <span class="color-red">■</span>：ゴール
+        </li>
+        <li class="description__list-item">
+          <span class="color-green">■</span>：正解ルート
+        </li>
+      </ul>
+    </div>
+
+    <div class="contoroller">
+      <button class="answer">正解ルート表示</button>
+    </div>
+
+    <div class="maze-wrapper"></div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="js/main.js" type="module"></script>
+  </body>
+</html>
+
+```
+
+**_style.css_**
+
+```css
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.contoroller {
+  text-align: center;
+}
+
+.contoroller .answer {
+  font-size: 16px;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  line-height: 40px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border: 1px #333 solid;
+  background: rgba(0, 0, 0, 0);
+  transition: all 0.3s;
+}
+
+.contoroller .answer.active {
+  background: rgba(0, 255, 0, 1);
+}
+
+.description {
+  margin: 16px auto;
+  text-align: center;
+  display: block;
+}
+
+.description__list {
+  padding-left: 0;
+  list-style: none;
+  display: inline-block;
+}
+
+.description__list-item {
+  text-align: left;
+}
+
+.color-blue {
+  color: #00f;
+}
+
+.color-red {
+  color: #f00;
+}
+
+.color-gray {
+  color: #808080;
+}
+
+.color-purple {
+  color: #a757a8;
+}
+
+.color-green {
+  color: #0f0;
+}
+
+.maze {
+  border-collapse: collapse;
+  margin: 20px auto 0;
+}
+
+.maze-cell {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  /* border: 1px solid #ddd; */
+}
+
+.maze-cell.-wall {
+  background-color: #000;
+}
+
+.maze-cell.-extending-wall {
+  background-color: #808080;
+}
+
+.maze-cell.-extending-start {
+  background-color: #a757a8;
+}
+
+.maze-cell.-path {
+  background-color: #fff;
+}
+
+.maze-cell.-answer.show {
+  background-color: #0f0;
+}
+
+.maze-cell.-start {
+  background-color: #00f;
+}
+
+.maze-cell.-goal {
+  background-color: #f00;
+}
+
+.maze-wrapper {
+  margin: 20px auto 0;
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; */
+}
+```
+
+ここまで実装できたら、表示を確認してみましょう。
+下記のような動作をしていれば、実装は完了です。
+
+<p align="center">
+<img src="./img/readme_迷路の自動探索_img_08.gif" alt="最終確認" width=50%>
+</p>
+
+[この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/xxGMojK)
+
+**_Maze.js_** は[こちら](https://codepen.io/matsuhaya/pen/vYObqay)
+
+**_Explorer.js_** は[こちら](https://codepen.io/matsuhaya/pen/oNXmrPb)
