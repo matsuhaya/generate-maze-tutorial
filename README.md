@@ -20,10 +20,10 @@
 迷路はプログラムを実行するたびに自動生成され、ただ１つの正解ルートをもちます。
 迷路の生成と探索にはアルゴリズムを利用しますが、事前の知識は必要ありません。
 
-[**最終的な成果物を確認する**](http://grayhorse5.sakura.ne.jp/generate-maze/)
+[**最終的な成果物を確認する**](https://generate-maze.netlify.com/)
 
 <p align="center">
-<img src="./img/readme_本チュートリアルの説明_img_01.png" alt="最終的な成果物" width=50%>
+<img src="./img/readme_本チュートリアルの説明_gif_01.gif" alt="最終的な成果物" width=50%>
 </p>
 
 ### 前提知識
@@ -226,7 +226,7 @@ export class Maze {
       Path: 0,
       Wall: 1,
       ExtendingWall: 2,
-      ExtendingStart: 3
+      ExtendingStart: 3,
     };
     this.extendingCounter = 0; // 迷路の壁を拡張するたびにカウンターが増加する
   }
@@ -287,7 +287,7 @@ this.cellType = {
   Path: 0,
   Wall: 1,
   ExtendingWall: 2,
-  ExtendingStart: 3
+  ExtendingStart: 3,
 };
 ```
 
@@ -1131,7 +1131,7 @@ export default class Explorer {
       FromUp: 'U',
       FromRight: 'R',
       FromDown: 'D',
-      FromLeft: 'L'
+      FromLeft: 'L',
     };
   }
 }
@@ -1479,7 +1479,7 @@ drowMyself() {
 **_main.js_**
 
 ```javascript
-$('.answer').click(e => {
+$('.answer').click((e) => {
   e.preventDefault();
   $(e.target).toggleClass('active');
   $('.maze-cell.-answer').toggleClass('show');
@@ -1503,7 +1503,7 @@ import { Maze } from './Maze.js';
 import Explorer from './Explorer.js';
 
 // 正解ルートの表示切り替え
-$('.answer').click(e => {
+$('.answer').click((e) => {
   e.preventDefault();
   $(e.target).toggleClass('active');
   $('.maze-cell.-answer').toggleClass('show');
@@ -1678,7 +1678,7 @@ maze.drowMyself();
 下記のような動作をしていれば、実装は完了です。
 
 <p align="center">
-<img src="./img/readme_迷路の自動探索_img_08.gif" alt="最終確認" width=50%>
+<img src="./img/readme_本チュートリアルの説明_gif_01.gif" alt="最終確認" width=50%>
 </p>
 
 [この時点でのコードを確認する](https://codepen.io/matsuhaya/pen/xxGMojK)
